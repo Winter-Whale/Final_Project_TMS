@@ -22,30 +22,31 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/security")
 public class SecurityController {
-    private final  SecurityService securityService;
+    private final SecurityService securityService;
+
     @Autowired
-    public SecurityController(SecurityService securityService){
+    public SecurityController(SecurityService securityService) {
         this.securityService = securityService;
     }
 
     @PostMapping("/registration/owner")
-    public ResponseEntity<User> registrationOwner(@RequestBody @Valid RegistrationDTO registrationDTO) throws RegistrationException{
+    public ResponseEntity<User> registrationOwner(@RequestBody @Valid RegistrationDTO registrationDTO) throws RegistrationException {
         User createdUser = securityService.registration(registrationDTO, Role.OWNER);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @PostMapping("/registration/renter")
-    public ResponseEntity<User> registrationRenter(@RequestBody @Valid RegistrationDTO registrationDTO) throws RegistrationException{
+    public ResponseEntity<User> registrationRenter(@RequestBody @Valid RegistrationDTO registrationDTO) throws RegistrationException {
         User createdUser = securityService.registration(registrationDTO, Role.RENTER);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Security> getSecurityById(@PathVariable Integer id){
+    public ResponseEntity<Security> getSecurityById(@PathVariable Integer id) {
         Optional<Security> security = securityService.getSecurityById(id);
-        if(security.isEmpty()){
+        if (security.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return  new ResponseEntity<>(security.get(), HttpStatus.OK);
+        return new ResponseEntity<>(security.get(), HttpStatus.OK);
     }
 }

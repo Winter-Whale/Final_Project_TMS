@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityMapper {
-    public Security mapFromRegistrationDTOToSecurity(RegistrationDTO userDTO, User user, Role role){
-        if(userDTO == null){
+    public Security mapFromRegistrationDTOToSecurity(RegistrationDTO userDTO, User user, Role role) {
+        if (userDTO == null) {
             throw new NullPointerException();
         }
         Security security = new Security();

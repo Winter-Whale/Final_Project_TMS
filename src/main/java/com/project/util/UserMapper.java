@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @Component
 public class UserMapper {
 
-    public User mapFromUserCreateDTOToUser(UserCreateDTO userDTO){
-        if(userDTO == null){
+    public User mapFromUserCreateDTOToUser(UserCreateDTO userDTO) {
+        if (userDTO == null) {
             throw new NullPointerException();
         }
         User user = new User();
@@ -25,8 +25,8 @@ public class UserMapper {
         return user;
     }
 
-    public User mapFromUserUpdateRequestDTOToUser(UserUpdateDTO updateDTO){
-        if(updateDTO == null){
+    public User mapFromUserUpdateRequestDTOToUser(UserUpdateDTO updateDTO) {
+        if (updateDTO == null) {
             throw new NullPointerException();
         }
         User user = new User();
@@ -39,8 +39,8 @@ public class UserMapper {
         return user;
     }
 
-    public User mapFromUserRegistrationRequestDTOToUser(RegistrationDTO regDTO){
-        if(regDTO == null){
+    public User mapFromUserRegistrationRequestDTOToUser(RegistrationDTO regDTO) {
+        if (regDTO == null) {
             throw new NullPointerException();
         }
         User user = new User();
@@ -50,7 +50,6 @@ public class UserMapper {
         user.setAge(regDTO.getAge());
         user.setCreated(LocalDateTime.now());
         user.setUpdated(LocalDateTime.now());
-        return  user;
+        return user;
     }
-
 }

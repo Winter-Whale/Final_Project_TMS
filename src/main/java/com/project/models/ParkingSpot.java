@@ -5,35 +5,42 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import net.minidev.json.annotate.JsonIgnore;
-
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_security")
+@Table(name = "parking_spots")
 @Data
-@EqualsAndHashCode(exclude = {"user"})
 @ToString(exclude = {"user"})
-public class Security {
+@EqualsAndHashCode(exclude = {"user"})
+public class ParkingSpot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String username;
-    @JsonIgnore
-    private String password;
+
+    @Column(name = "address")
+    @NotBlank
+    private String address;
+    @NotBlank
+    private String description;
+    @Positive
+    private int pricePerHour;
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Status status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
     @JsonBackReference
-    @OneToOne
-    @JoinColumn(name = "user_id")
     private User user;
+
 }

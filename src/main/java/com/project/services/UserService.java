@@ -21,26 +21,27 @@ public class UserService {
     private final UserRepository userRepository;
 
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(Integer id){
+    public Optional<User> getUserById(Integer id) {
         Optional<User> userFromDatabase = userRepository.findById(id);
         return userFromDatabase;
     }
 
 
-    public User createUser(UserCreateDTO userDto){
+    public User createUser(UserCreateDTO userDto) {
         User saveUser = userRepository.save(userMapper.mapFromUserCreateDTOToUser(userDto));
         return saveUser;
     }
 
     public User updateUser(UserUpdateDTO updateDTO) throws UserUpdateException, UserNotFoundException {
-        Optional <User> userFromDatabase = userRepository.findById(updateDTO.getId());
-        if(userFromDatabase.isEmpty()){
+        Optional<User> userFromDatabase = userRepository.findById(updateDTO.getId());
+        if (userFromDatabase.isEmpty()) {
             throw new UserNotFoundException("Sorry, user not found");
-        }if(userRepository.existsByPhone(updateDTO.getPhone()) &&
+        }
+        if (userRepository.existsByPhone(updateDTO.getPhone()) &&
                 !userFromDatabase.get().getPhone().equals(updateDTO.getPhone())) {
             throw new UserUpdateException("Phone already taken by another user");
         }
@@ -48,16 +49,11 @@ public class UserService {
         return updateUser;
     }
 
-    public void deleteUserById(Integer id) throws UserNotFoundException{
+    public void deleteUserById(Integer id) throws UserNotFoundException {
         Optional<User> userFromDatabase = userRepository.findById(id);
-        if(userFromDatabase.isEmpty()){
+        if (userFromDatabase.isEmpty()) {
             throw new UserNotFoundException("Sorry, user not found");
         }
         userRepository.deleteById(id);
     }
-
-
-
-
-
 }

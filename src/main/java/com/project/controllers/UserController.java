@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -31,16 +31,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-        public ResponseEntity<User> getUserById(@PathVariable Integer id){
+    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         Optional<User> user = userService.getUserById(id);
-        if(user.isEmpty()){
-            return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (user.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(user.get(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody @Valid UserCreateDTO userRequest){
+    public ResponseEntity<User> createUser(@RequestBody @Valid UserCreateDTO userRequest) {
         User createUser = userService.createUser(userRequest);
         return new ResponseEntity<>(createUser, HttpStatus.CREATED);
     }
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteUserById(@PathVariable Integer id) throws UserNotFoundException{
+    public ResponseEntity<HttpStatus> deleteUserById(@PathVariable Integer id) throws UserNotFoundException {
         userService.deleteUserById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

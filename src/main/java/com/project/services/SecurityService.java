@@ -25,13 +25,14 @@ public class SecurityService {
     private final UserMapper userMapper;
     private final SecurityMapper securityMapper;
 
-    public Optional <Security> getSecurityById(Integer id){
+    public Optional<Security> getSecurityById(Integer id) {
         Optional<Security> securityFromDatabase = securityRepository.findById(id);
         return securityFromDatabase;
     }
+
     @Transactional(rollbackFor = Exception.class, timeout = 30, isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
-    public User registration(RegistrationDTO registrationDTO, Role role) throws RegistrationException{
-        if(securityRepository.existsByUsername(registrationDTO.getUsername()) || userRepository.existsByPhone(registrationDTO.getPhone())){
+    public User registration(RegistrationDTO registrationDTO, Role role) throws RegistrationException {
+        if (securityRepository.existsByUsername(registrationDTO.getUsername()) || userRepository.existsByPhone(registrationDTO.getPhone())) {
             throw new RegistrationException("Username/Phone already exists");
         }
         User user = userMapper.mapFromUserRegistrationRequestDTOToUser(registrationDTO);
