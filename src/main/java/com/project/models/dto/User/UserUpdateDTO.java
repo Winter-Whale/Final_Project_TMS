@@ -1,4 +1,4 @@
-package com.project.models.dto;
+package com.project.models.dto.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;

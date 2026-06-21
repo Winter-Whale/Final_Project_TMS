@@ -1,11 +1,11 @@
 package com.project.controllers;
 
-import com.project.exceprions.UserNotFoundException;
-import com.project.exceprions.UserUpdateException;
-import com.project.models.dto.UserUpdateDTO;
+import com.project.exceptions.UserNotFoundException;
+import com.project.exceptions.UserUpdateException;
+import com.project.models.dto.User.UserUpdateDTO;
 import jakarta.validation.Valid;
 import com.project.models.User;
-import com.project.models.dto.UserCreateDTO;
+import com.project.models.dto.User.UserCreateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -18,6 +18,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "parking_spots")
 @Data
@@ -34,7 +36,7 @@ public class ParkingSpot {
     @NotBlank
     private String description;
     @Positive
-    private int pricePerHour;
+    private BigDecimal pricePerHour;
     @Enumerated(EnumType.STRING)
     private Status status;
 

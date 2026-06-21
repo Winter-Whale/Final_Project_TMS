@@ -1,10 +1,13 @@
 package com.project.controllers;
 
-import com.project.exceprions.RegistrationException;
+import com.project.exceptions.RegistrationException;
+import com.project.exceptions.UserNotFoundException;
+import com.project.exceptions.UserUpdateException;
 import com.project.models.Role;
 import com.project.models.Security;
 import com.project.models.User;
-import com.project.models.dto.RegistrationDTO;
+import com.project.models.dto.User.RegistrationDTO;
+import com.project.models.dto.User.SecurityUpdateDTO;
 import com.project.services.SecurityService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,5 +52,17 @@ public class SecurityController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(security.get(), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<String> updateSecurity(@PathVariable Integer id, @RequestBody @Valid SecurityUpdateDTO dto){
+        try{
+            securityService.updateSecurity(id, dto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (UserNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }catch (UserUpdateException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

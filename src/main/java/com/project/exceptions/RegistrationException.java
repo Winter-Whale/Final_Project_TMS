@@ -1,4 +1,4 @@
-package com.project.exceprions;
+package com.project.exceptions;
 
 public class RegistrationException extends RuntimeException {
     public RegistrationException(String message) {

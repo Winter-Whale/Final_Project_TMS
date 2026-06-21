@@ -2,8 +2,8 @@ package com.project.util;
 
 import com.project.models.ParkingSpot;
 import com.project.models.User;
-import com.project.models.dto.ParkingRequestDTO;
-import com.project.models.dto.ParkingResponseDTO;
+import com.project.models.dto.Parking.ParkingRequestDTO;
+import com.project.models.dto.Parking.ParkingResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component

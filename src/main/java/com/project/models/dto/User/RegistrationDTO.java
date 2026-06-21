@@ -1,4 +1,4 @@
-package com.project.models.dto;
+package com.project.models.dto.User;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -15,6 +15,6 @@ public class RegistrationDTO {
     private int age;
     @Size(min = 2, max = 30)
     private String username;
-    @Pattern(regexp = "[A-z]{9,}")
+    @Pattern(regexp = "[A-z0-9]{9,}")
     private String password;
 }

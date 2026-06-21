@@ -3,7 +3,7 @@ package com.project.util;
 import com.project.models.Role;
 import com.project.models.Security;
 import com.project.models.User;
-import com.project.models.dto.RegistrationDTO;
+import com.project.models.dto.User.RegistrationDTO;
 import org.springframework.stereotype.Component;
 
 

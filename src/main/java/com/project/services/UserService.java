@@ -1,11 +1,11 @@
 package com.project.services;
 
-import com.project.exceprions.UserNotFoundException;
-import com.project.exceprions.UserUpdateException;
-import com.project.models.dto.UserUpdateDTO;
+import com.project.exceptions.UserNotFoundException;
+import com.project.exceptions.UserUpdateException;
+import com.project.models.dto.User.UserUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import com.project.models.User;
-import com.project.models.dto.UserCreateDTO;
+import com.project.models.dto.User.UserCreateDTO;
 import org.springframework.stereotype.Service;
 import com.project.repositories.UserRepository;
 import com.project.util.UserMapper;

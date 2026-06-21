@@ -1,9 +1,9 @@
 package com.project.util;
 
 import com.project.models.User;
-import com.project.models.dto.RegistrationDTO;
-import com.project.models.dto.UserCreateDTO;
-import com.project.models.dto.UserUpdateDTO;
+import com.project.models.dto.User.RegistrationDTO;
+import com.project.models.dto.User.UserCreateDTO;
+import com.project.models.dto.User.UserUpdateDTO;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
