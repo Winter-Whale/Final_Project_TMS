@@ -6,6 +6,8 @@ import com.project.exceptions.UserUpdateException;
 import com.project.models.Role;
 import com.project.models.Security;
 import com.project.models.User;
+import com.project.models.dto.User.AuthRequestDTO;
+import com.project.models.dto.User.AuthResponseDTO;
 import com.project.models.dto.User.RegistrationDTO;
 import com.project.models.dto.User.SecurityUpdateDTO;
 import com.project.services.SecurityService;
@@ -64,5 +66,14 @@ public class SecurityController {
         }catch (UserUpdateException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<AuthResponseDTO> generateJWT(@Valid @RequestBody AuthRequestDTO authRequestDTO) {
+        Optional<AuthResponseDTO> jwt = securityService.generateJWT(authRequestDTO);
+        if (jwt.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(jwt.get(), HttpStatus.CREATED);
     }
 }

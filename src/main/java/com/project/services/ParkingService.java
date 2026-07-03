@@ -12,12 +12,13 @@ import com.project.repositories.UserRepository;
 import com.project.util.ParkingSpotMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -27,11 +28,13 @@ public class ParkingService {
     private final ParkingSpotMapper parkingSpotMapper;
 
     public ParkingResponseDTO createSpot(ParkingRequestDTO req) {
+        log.debug("IN ParkingService: createSpot");
         User owner = userRepository.findById(req.getOwnerId())
                 .orElseThrow(() ->  new RegistrationException("Registration error, please check the data is correct"));
         ParkingSpot spot = parkingSpotMapper.mapFromParkingRequestDTOToParkingSpot(req);
         spot.setUser(owner);
         ParkingSpot saved = parkingRepository.save(spot);
+        log.debug("OUT ParkingService: createSpot");
         return parkingSpotMapper.mapFromParkingSpotToParkingResponseDTO(saved);
     }
 
@@ -42,19 +45,24 @@ public class ParkingService {
     }
 
     public ParkingResponseDTO getSpotById(Integer id) {
+        log.debug("IN ParkingService: getSpotById");
         ParkingSpot spot = parkingRepository.findById(id).orElseThrow(() -> new SpotNotFoundException("Spot not found witch id: " + id));
+        log.debug("OUT ParkingService: getSpotById");
         return parkingSpotMapper.mapFromParkingSpotToParkingResponseDTO(spot);
     }
 
     public List<ParkingResponseDTO> getSpotByUser(Integer userId) {
+        log.debug("IN ParkingService: getSpotByUser");
         if (!userRepository.existsById(userId)) {
             new UserNotFoundException("User not found witch id: " + userId);
         }
+        log.debug("OUT ParkingService: getSpotByUser");
         return parkingRepository.findByUserId(userId).stream()
                 .map(parkingSpotMapper::mapFromParkingSpotToParkingResponseDTO).collect(Collectors.toList());
     }
 
     public ParkingResponseDTO updateSpot(Integer spotId, ParkingRequestDTO req) {
+        log.debug("IN ParkingService: updateSpot");
         ParkingSpot spot = parkingRepository.findById(spotId)
                 .orElseThrow(() -> new SpotNotFoundException("Spot not found with id: " + spotId));
         spot.setAddress(req.getAddress());
@@ -63,12 +71,17 @@ public class ParkingService {
         spot.setStatus(req.getStatus());
 
         ParkingSpot updated = parkingRepository.save(spot);
+        log.info("Spot with id: {} updated", spotId);
+        log.debug("OUT ParkingService: updateSpot");
         return parkingSpotMapper.mapFromParkingSpotToParkingResponseDTO(updated);
     }
 
     public void deleteSpot(Integer spotId) {
+        log.debug("IN ParkingService: deleteSpot");
         ParkingSpot spot = parkingRepository.findById(spotId)
                 .orElseThrow(() -> new SpotNotFoundException("Spot not found with id " + spotId));
         parkingRepository.delete(spot);
+        log.info("Delete Spot with id: {}", spotId);
+        log.debug("OUT ParkingService: deleteSpot");
     }
 }

@@ -13,12 +13,13 @@ import com.project.repositories.BookingRepository;
 import com.project.repositories.ParkingRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -28,6 +29,7 @@ public class BookingService {
     private final UserService userService;
 
     public BookingResponseDTO createBooking(BookingRequestDTO dto, Integer renterId) throws UserNotFoundException {
+        log.debug("IN BookingService: createBooking");
         ParkingSpot spot = parkingRepository.findById(dto.getSpotId())
                 .orElseThrow(()->new SpotNotFoundException("Spot not found"));
         if(spot.getStatus() != Status.FREE){
@@ -62,6 +64,7 @@ public class BookingService {
 
         spot.setStatus(Status.BUSY);
         parkingRepository.save(spot);
+        log.debug("OUT BookingService: createBooking");
         return mapToResponse(saved);
     }
 
