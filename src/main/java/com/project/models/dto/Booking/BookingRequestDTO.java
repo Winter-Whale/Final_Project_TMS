@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 @Data
 public class BookingRequestDTO {
     @NotNull
-    private Integer renterId;
-    @NotNull
     private int spotId;
     @NotNull
     @Future
@@ -19,6 +17,6 @@ public class BookingRequestDTO {
     private LocalDateTime startTime;
     @NotNull
     @Future
-    @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endTime;
 }

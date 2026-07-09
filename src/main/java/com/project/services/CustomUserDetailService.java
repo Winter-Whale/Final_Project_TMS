@@ -17,9 +17,9 @@ public class CustomUserDetailService implements UserDetailsService {
     private final SecurityRepository securityRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Security> security = securityRepository.findByUsername(username);
-        if(security.isEmpty()){
+        if (security.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
         Security securityEntity = security.get();

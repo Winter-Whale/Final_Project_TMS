@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import com.project.models.User;
 import com.project.models.dto.User.UserCreateDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.project.repositories.UserRepository;
 import com.project.util.UserMapper;
@@ -33,6 +34,13 @@ public class UserService {
         return userFromDatabase;
     }
 
+    public Optional<User> getInfoAboutMyself() {
+        log.debug("IN UserService:getInfoAboutMyself");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userRepository.findByUsername(username);
+        log.debug("OUT UserService:getInfoAboutMyself");
+        return user;
+    }
 
     public User createUser(UserCreateDTO userDto) {
         log.debug("IN UserService:createUser");
@@ -41,7 +49,7 @@ public class UserService {
         return saveUser;
     }
 
-    public User updateUser(UserUpdateDTO updateDTO) throws UserUpdateException, UserNotFoundException {
+    public User updateUser(UserUpdateDTO updateDTO) {
         log.debug("IN UserService:updateUser");
         Optional<User> userFromDatabase = userRepository.findById(updateDTO.getId());
         if (userFromDatabase.isEmpty()) {
@@ -57,7 +65,7 @@ public class UserService {
         return updateUser;
     }
 
-    public void deleteUserById(Integer id) throws UserNotFoundException {
+    public void deleteUserById(Integer id) {
         log.debug("IN UserService:deleteUserById");
         Optional<User> userFromDatabase = userRepository.findById(id);
         if (userFromDatabase.isEmpty()) {

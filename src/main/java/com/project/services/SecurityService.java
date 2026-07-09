@@ -27,6 +27,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class SecurityService {
+
     private final SecurityRepository securityRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -37,20 +38,20 @@ public class SecurityService {
     public Optional<Security> getSecurityById(Integer id) {
         log.debug("IN SecurityService: getSecurityById");
         Optional<Security> securityFromDatabase = securityRepository.findById(id);
-        log.info("Result securityFromDatabase: {}",securityFromDatabase);
         log.debug("OUT SecurityService: getSecurityById");
         return securityFromDatabase;
     }
 
     @Transactional(rollbackFor = Exception.class, timeout = 30)
-    public User registration(RegistrationDTO registrationDTO, Role role) throws RegistrationException {
+    public User registration(RegistrationDTO registrationDTO, Role role) {
         log.debug("IN SecurityService: registration");
-        if (securityRepository.existsByUsername(registrationDTO.getUsername()) || userRepository.existsByPhone(registrationDTO.getPhone())) {
+        if (securityRepository.existsByUsername(registrationDTO.getUsername())
+                || userRepository.existsByPhone(registrationDTO.getPhone())) {
             throw new RegistrationException("Username/Phone already exists");
         }
         User user = userMapper.mapFromUserRegistrationRequestDTOToUser(registrationDTO);
         user = userRepository.save(user);
-        log.info("User saved: {}", user);
+        log.info("User saved: {}", user.getId());
         Security security = securityMapper.mapFromRegistrationDTOToSecurity(registrationDTO, user, role);
         securityRepository.save(security);
         log.info("User security added for user with id: {}", user.getId());
@@ -58,21 +59,21 @@ public class SecurityService {
         return user;
     }
 
-    public void updateSecurity(Integer userId, SecurityUpdateDTO dto) throws UserNotFoundException, UserUpdateException {
+    public void updateSecurity(Integer userId, SecurityUpdateDTO dto) {
         log.debug("IN SecurityService: updateSecurity");
         Security security = securityRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found"));
         if(!dto.getCurrentPassword().equals(security.getPassword())){
             throw  new UserUpdateException("Current password is incorrect");
         }
-        if (!security.getUsername().equals(dto.getNewUserName())){
-            if(securityRepository.existsByUsername(dto.getNewUserName())){
-                throw  new UserUpdateException("Username already taken");
+        if (!security.getUsername().equals(dto.getNewUserName())) {
+            if (securityRepository.existsByUsername(dto.getNewUserName())) {
+                throw new UserUpdateException("Username already taken");
             }
             security.setUsername(dto.getNewUserName());
         }
         security.setPassword(dto.getNewPassword());
         securityRepository.save(security);
-        log.info("Security saved: {}", securityRepository);
+        log.info("Security updated for id: {}", userId);
         log.debug("OUT SecurityService: updateSecurity");
     }
 
@@ -94,4 +95,3 @@ public class SecurityService {
         return Optional.of(new AuthResponseDTO(jwt));
     }
 }
-

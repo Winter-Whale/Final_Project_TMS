@@ -26,12 +26,12 @@ public class JwtFilter implements Filter {
     private final CustomUserDetailService customUserDetailService;
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException{
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
         log.debug("IN JwtFilter: doFilter");
         Optional<String> jwt = jwtService.getTokenFromServletRequest(servletRequest);
-        if(jwt.isPresent()){
+        if (jwt.isPresent()) {
             Optional<String> username = jwtService.getUsernameFromJwt(jwt.get());
-            if(username.isPresent()){
+            if (username.isPresent()) {
                 UserDetails userDetail = customUserDetailService.loadUserByUsername(username.get());
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,23 +29,23 @@ public class BookingService {
     private final ParkingRepository parkingRepository;
     private final UserService userService;
 
-    public BookingResponseDTO createBooking(BookingRequestDTO dto, Integer renterId) throws UserNotFoundException {
+    public BookingResponseDTO createBooking(BookingRequestDTO dto, Integer renterId) {
         log.debug("IN BookingService: createBooking");
         ParkingSpot spot = parkingRepository.findById(dto.getSpotId())
-                .orElseThrow(()->new SpotNotFoundException("Spot not found"));
-        if(spot.getStatus() != Status.FREE){
+                .orElseThrow(() -> new SpotNotFoundException("Spot not found"));
+        if (spot.getStatus() != Status.FREE) {
             throw new BookingException("Spot is not available for booking");
         }
 
         boolean overlapping = bookingRepository.existsBySpotIdAndStartTimeLessThanEqualAndEndTimeGreaterThanEqual(
-                spot.getId(),dto.getEndTime(), dto.getStartTime());
-        if(overlapping){
+                spot.getId(), dto.getEndTime(), dto.getStartTime());
+        if (overlapping) {
             throw new BookingException("Spot is already booked for this time period");
         }
-        if(dto.getStartTime().isAfter(dto.getEndTime())){
-         throw new BookingException("Start time must be before end time");
+        if (dto.getStartTime().isAfter(dto.getEndTime())) {
+            throw new BookingException("Start time must be before end time");
         }
-        if(dto.getStartTime().isBefore(LocalDateTime.now())){
+        if (dto.getStartTime().isBefore(LocalDateTime.now())) {
             throw new BookingException("Start time must be in future");
         }
         long hours = ChronoUnit.HOURS.between(dto.getStartTime(), dto.getEndTime());
@@ -52,7 +53,7 @@ public class BookingService {
         BigDecimal total = spot.getPricePerHour().multiply(BigDecimal.valueOf(hours));
 
         User renter = userService.getUserById(renterId)
-                .orElseThrow(()-> new UserNotFoundException("User not found with id: "+ renterId));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + renterId));
 
         Booking booking = new Booking();
         booking.setSpot(spot);
@@ -69,7 +70,7 @@ public class BookingService {
     }
 
 
-    private BookingResponseDTO mapToResponse(Booking booking){
+    private BookingResponseDTO mapToResponse(Booking booking) {
         BookingResponseDTO dto = new BookingResponseDTO();
         dto.setBookingId(booking.getId());
         dto.setSpotId(booking.getSpot().getId());

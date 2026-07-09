@@ -1,8 +1,5 @@
 package com.project.controllers;
 
-import com.project.exceptions.RegistrationException;
-import com.project.exceptions.UserNotFoundException;
-import com.project.exceptions.UserUpdateException;
 import com.project.models.Role;
 import com.project.models.Security;
 import com.project.models.User;
@@ -12,7 +9,7 @@ import com.project.models.dto.User.RegistrationDTO;
 import com.project.models.dto.User.SecurityUpdateDTO;
 import com.project.services.SecurityService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,46 +23,36 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/security")
 public class SecurityController {
+
     private final SecurityService securityService;
 
-    @Autowired
-    public SecurityController(SecurityService securityService) {
-        this.securityService = securityService;
-    }
-
     @PostMapping("/registration/owner")
-    public ResponseEntity<User> registrationOwner(@RequestBody @Valid RegistrationDTO registrationDTO) throws RegistrationException {
+    public ResponseEntity<User> registrationOwner(@RequestBody @Valid RegistrationDTO registrationDTO) {
         User createdUser = securityService.registration(registrationDTO, Role.OWNER);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PostMapping("/registration/renter")
-    public ResponseEntity<User> registrationRenter(@RequestBody @Valid RegistrationDTO registrationDTO) throws RegistrationException {
+    public ResponseEntity<User> registrationRenter(@RequestBody @Valid RegistrationDTO registrationDTO) {
         User createdUser = securityService.registration(registrationDTO, Role.RENTER);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Security> getSecurityById(@PathVariable Integer id) {
         Optional<Security> security = securityService.getSecurityById(id);
-        if (security.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(security.get(), HttpStatus.OK);
+        return security
+                .map(value -> ResponseEntity.ok(value))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<String> updateSecurity(@PathVariable Integer id, @RequestBody @Valid SecurityUpdateDTO dto){
-        try{
-            securityService.updateSecurity(id, dto);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (UserNotFoundException e){
-            return ResponseEntity.notFound().build();
-        }catch (UserUpdateException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Void> updateSecurity(@PathVariable Integer id, @RequestBody @Valid SecurityUpdateDTO dto) {
+        securityService.updateSecurity(id, dto);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/generate")
