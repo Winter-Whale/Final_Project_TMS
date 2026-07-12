@@ -4,6 +4,13 @@ import com.project.models.User;
 import com.project.models.dto.User.UserCreateDTO;
 import com.project.models.dto.User.UserUpdateDTO;
 import com.project.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,17 +30,35 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
+@Tag(name = "Пользователи", description = "Управление пользователями")
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping
+    @Operation(summary = "Получить всех пользователей",
+            description = "Возвращает список всех пользователей (доступно только ADMIN).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Список получен",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class)))
+    })
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Integer id) {
+    @Operation(summary = "Получить пользователя по ID",
+            description = "Возвращает данные пользователя (доступно ADMIN).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Пользователь найден",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "404", description = "Не найден")
+    })
+    public ResponseEntity<User> getUserById(
+            @Parameter(description = "ID пользователя", required = true, example = "1")
+            @PathVariable Integer id) {
         Optional<User> user = userService.getUserById(id);
         return user
                 .map(ResponseEntity::ok)
@@ -41,6 +66,14 @@ public class UserController {
     }
 
     @GetMapping("/info/myself")
+    @Operation(summary = "Получить информацию о себе",
+            description = "Возвращает данные текущего аутентифицированного пользователя.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Данные получены",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
     public ResponseEntity<User> getInfoAboutMyself() {
         Optional<User> user = userService.getInfoAboutMyself();
         if (user.isEmpty()) {
@@ -50,19 +83,48 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody @Valid UserCreateDTO userRequest) {
+    @Operation(summary = "Создать пользователя",
+            description = "Создаёт нового пользователя (только для ADMIN).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Пользователь создан",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные")
+    })
+    public ResponseEntity<User> createUser(
+            @Parameter(description = "Данные пользователя", required = true)
+            @RequestBody @Valid UserCreateDTO userRequest) {
         User createUser = userService.createUser(userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
     @PutMapping
-    public ResponseEntity<User> updateUser(@RequestBody @Valid UserUpdateDTO userRequest) {
+    @Operation(summary = "Обновить пользователя",
+            description = "Обновляет данные существующего пользователя. Доступно для ADMIN или самому пользователю.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Обновлён",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные или телефон уже занят"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
+    public ResponseEntity<User> updateUser(
+            @Parameter(description = "Новые данные пользователя", required = true)
+            @RequestBody @Valid UserUpdateDTO userRequest) {
         User user = userService.updateUser(userRequest);
         return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable Integer id) {
+    @Operation(summary = "Удалить пользователя",
+            description = "Удаляет пользователя по ID. Доступно только ADMIN.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Удалён"),
+            @ApiResponse(responseCode = "404", description = "Не найден")
+    })
+    public ResponseEntity<Void> deleteUserById(
+            @Parameter(description = "ID пользователя", required = true, example = "1")
+            @PathVariable Integer id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
     }
