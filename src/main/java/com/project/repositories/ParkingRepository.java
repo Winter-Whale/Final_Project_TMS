@@ -14,7 +14,7 @@ import java.util.List;
 public interface ParkingRepository extends JpaRepository<ParkingSpot, Integer> {
     List<ParkingSpot> findByUserId(Integer userId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("UPDATE ParkingSpot p SET p.status = :newStatus WHERE p.status = :oldStatus AND EXISTS " +
             "(SELECT b FROM Booking b WHERE b.spot = p AND b.endTime < :now)")
     int releaseExpiredSpots(@Param("newStatus") Status newStatus,

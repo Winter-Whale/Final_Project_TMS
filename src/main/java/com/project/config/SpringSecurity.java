@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -45,7 +44,7 @@ public class SpringSecurity {
                         .requestMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole( "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/info/myself").hasAnyRole("OWNER", "RENTER")
                         .requestMatchers(HttpMethod.POST, "/users/**").hasAnyRole( "ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyRole("ADMIN", "OWNER", "RENTER")
                         .requestMatchers(HttpMethod.DELETE, "/users/**").hasAnyRole("OWNER", "ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -56,6 +55,5 @@ public class SpringSecurity {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
-        // return new BCryptPasswordEncoder();
     }
 }
