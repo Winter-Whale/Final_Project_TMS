@@ -2,6 +2,7 @@ package com.project.config;
 
 import com.project.filters.JwtFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,8 +26,10 @@ public class SpringSecurity {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .securityMatcher(EndpointRequest.toAnyEndpoint())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                         .requestMatchers(HttpMethod.POST, "/security/registration/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/security/generate").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()

@@ -31,5 +31,4 @@ public class Booking {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private BigDecimal totalPrice;
-
 }

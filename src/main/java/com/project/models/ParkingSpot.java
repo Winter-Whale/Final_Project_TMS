@@ -44,5 +44,4 @@ public class ParkingSpot {
     @JoinColumn(name = "owner_id")
     @JsonBackReference
     private User user;
-
 }
