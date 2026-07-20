@@ -1,8 +1,8 @@
 package com.project.controllers;
 
 import com.project.models.User;
-import com.project.models.dto.User.UserCreateDTO;
-import com.project.models.dto.User.UserUpdateDTO;
+import com.project.models.dto.user.UserCreateDTO;
+import com.project.models.dto.user.UserUpdateDTO;
 import com.project.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,10 +36,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @Operation(summary = "Получить всех пользователей",
-            description = "Возвращает список всех пользователей (доступно только ADMIN).")
+    @Operation(summary = "Get all users",
+            description = "Returns a list of all users (available only to ADMIN).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список получен",
+            @ApiResponse(responseCode = "200", description = "The list has been received.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = User.class)))
     })
@@ -48,16 +48,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Получить пользователя по ID",
-            description = "Возвращает данные пользователя (доступно ADMIN).")
+    @Operation(summary = "Get user by ID",
+            description = "Returns user data (available to ADMIN).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Пользователь найден",
+            @ApiResponse(responseCode = "200", description = "User not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "404", description = "Не найден")
+            @ApiResponse(responseCode = "404", description = "Not found")
     })
     public ResponseEntity<User> getUserById(
-            @Parameter(description = "ID пользователя", required = true, example = "1")
+            @Parameter(description = "User ID", required = true, example = "1")
             @PathVariable Integer id) {
         Optional<User> user = userService.getUserById(id);
         return user
@@ -66,13 +66,13 @@ public class UserController {
     }
 
     @GetMapping("/info/myself")
-    @Operation(summary = "Получить информацию о себе",
-            description = "Возвращает данные текущего аутентифицированного пользователя.")
+    @Operation(summary = "Get information about yourself",
+            description = "Returns the data of the currently authenticated user.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Данные получены",
+            @ApiResponse(responseCode = "200", description = "Data received",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<User> getInfoAboutMyself() {
         Optional<User> user = userService.getInfoAboutMyself();
@@ -83,47 +83,47 @@ public class UserController {
     }
 
     @PostMapping
-    @Operation(summary = "Создать пользователя",
-            description = "Создаёт нового пользователя (только для ADMIN).")
+    @Operation(summary = "Create a user",
+            description = "Creates a new user (for ADMIN only).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Пользователь создан",
+            @ApiResponse(responseCode = "201", description = "User created",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные")
+            @ApiResponse(responseCode = "400", description = "Incorrect data")
     })
     public ResponseEntity<User> createUser(
-            @Parameter(description = "Данные пользователя", required = true)
+            @Parameter(description = "User data", required = true)
             @RequestBody @Valid UserCreateDTO userRequest) {
         User createUser = userService.createUser(userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
     @PutMapping
-    @Operation(summary = "Обновить пользователя",
-            description = "Обновляет данные существующего пользователя. Доступно для ADMIN или самому пользователю.")
+    @Operation(summary = "Update user",
+            description = "Updates an existing user's data. Available to ADMIN or the user themselves.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Обновлён",
+            @ApiResponse(responseCode = "200", description = "Updated",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные или телефон уже занят"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Incorrect data or the phone number is already busy"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<User> updateUser(
-            @Parameter(description = "Новые данные пользователя", required = true)
+            @Parameter(description = "New user data", required = true)
             @RequestBody @Valid UserUpdateDTO userRequest) {
         User user = userService.updateUser(userRequest);
         return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Удалить пользователя",
-            description = "Удаляет пользователя по ID. Доступно только ADMIN.")
+    @Operation(summary = "Delete user",
+            description = "Deletes a user by ID. Only available to ADMIN users.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Удалён"),
-            @ApiResponse(responseCode = "404", description = "Не найден")
+            @ApiResponse(responseCode = "204", description = "Deleted"),
+            @ApiResponse(responseCode = "404", description = "Not found")
     })
     public ResponseEntity<Void> deleteUserById(
-            @Parameter(description = "ID пользователя", required = true, example = "1")
+            @Parameter(description = "User ID", required = true, example = "1")
             @PathVariable Integer id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();

@@ -3,9 +3,8 @@ package com.project.util;
 import com.project.models.Role;
 import com.project.models.Security;
 import com.project.models.User;
-import com.project.models.dto.User.RegistrationDTO;
+import com.project.models.dto.user.RegistrationDTO;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class SecurityMapper {

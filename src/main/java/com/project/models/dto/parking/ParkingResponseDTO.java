@@ -1,4 +1,4 @@
-package com.project.models.dto.Parking;
+package com.project.models.dto.parking;
 
 import com.project.models.Status;
 import lombok.Data;

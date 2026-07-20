@@ -3,10 +3,10 @@ package com.project.controllers;
 import com.project.models.Role;
 import com.project.models.Security;
 import com.project.models.User;
-import com.project.models.dto.User.AuthRequestDTO;
-import com.project.models.dto.User.AuthResponseDTO;
-import com.project.models.dto.User.RegistrationDTO;
-import com.project.models.dto.User.SecurityUpdateDTO;
+import com.project.models.dto.user.AuthRequestDTO;
+import com.project.models.dto.user.AuthResponseDTO;
+import com.project.models.dto.user.RegistrationDTO;
+import com.project.models.dto.user.SecurityUpdateDTO;
 import com.project.services.SecurityService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,54 +32,54 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/security")
-@Tag(name = "Аутентификация и безопасность", description = "Регистрация, вход, управление учётными данными")
+@Tag(name = "Authentication and Security", description = "Registration, login, account management")
 public class SecurityController {
 
     private final SecurityService securityService;
 
     @PostMapping("/registration/owner")
-    @Operation(summary = "Регистрация владельца",
-            description = "Создаёт нового пользователя с ролью OWNER.")
+    @Operation(summary = "Owner registration",
+            description = "Creates a new user with the OWNER role.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Пользователь зарегистрирован",
+            @ApiResponse(responseCode = "201", description = "The user is registered",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные или логин/телефон уже заняты")
+            @ApiResponse(responseCode = "400", description = "Incorrect data or login/phone number is already taken")
     })
     public ResponseEntity<User> registrationOwner(
-            @Parameter(description = "Данные для регистрации", required = true)
+            @Parameter(description = "Registration details", required = true)
             @RequestBody @Valid RegistrationDTO registrationDTO) {
         User createdUser = securityService.registration(registrationDTO, Role.OWNER);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PostMapping("/registration/renter")
-    @Operation(summary = "Регистрация арендатора",
-            description = "Создаёт нового пользователя с ролью RENTER.")
+    @Operation(summary = "Renter registration",
+            description = "Creates a new user with the RENTER role.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Пользователь зарегистрирован",
+            @ApiResponse(responseCode = "201", description = "The user is registered",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные или логин/телефон уже заняты")
+            @ApiResponse(responseCode = "400", description = "Incorrect data or login/phone number is already taken")
     })
     public ResponseEntity<User> registrationRenter(
-            @Parameter(description = "Данные для регистрации", required = true)
+            @Parameter(description = "Registration details", required = true)
             @RequestBody @Valid RegistrationDTO registrationDTO) {
         User createdUser = securityService.registration(registrationDTO, Role.RENTER);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Получить данные безопасности пользователя",
-            description = "Возвращает запись Security по ID (доступно только ADMIN).")
+    @Operation(summary = "Get user security data",
+            description = "Returns a Security record by ID (available only to ADMIN).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Найдено",
+            @ApiResponse(responseCode = "200", description = "Found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Security.class))),
-            @ApiResponse(responseCode = "404", description = "Не найдено")
+            @ApiResponse(responseCode = "404", description = "Not found")
     })
     public ResponseEntity<Security> getSecurityById(
-            @Parameter(description = "ID записи Security", required = true, example = "1")
+            @Parameter(description = "Security Record ID", required = true, example = "1")
             @PathVariable Integer id) {
         Optional<Security> security = securityService.getSecurityById(id);
         return security
@@ -88,33 +88,33 @@ public class SecurityController {
     }
 
     @PutMapping("/{id}/update")
-    @Operation(summary = "Обновить учётные данные",
-            description = "Позволяет изменить логин и пароль, предварительно проверив текущий пароль.")
+    @Operation(summary = "Update credentials",
+            description = "Allows you to change your login and password, after checking the current password.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Обновлено успешно"),
-            @ApiResponse(responseCode = "400", description = "Неверный текущий пароль или логин уже занят")
+            @ApiResponse(responseCode = "200", description = "Updated successfully"),
+            @ApiResponse(responseCode = "400", description = "The current password is incorrect or the login is already taken.")
     })
     public ResponseEntity<Void> updateSecurity(
-            @Parameter(description = "ID записи Security", required = true, example = "1")
+            @Parameter(description = "Security Record ID", required = true, example = "1")
             @PathVariable Integer id,
-            @Parameter(description = "Данные для обновления (текущий пароль, новый логин, новый пароль)", required = true)
+            @Parameter(description = "Update details (current password, new login, new password)", required = true)
             @RequestBody @Valid SecurityUpdateDTO dto) {
         securityService.updateSecurity(id, dto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/generate")
-    @Operation(summary = "Аутентификация и получение JWT",
-            description = "Отправьте логин и пароль, чтобы получить JWT-токен для доступа к защищённым эндпоинтам.")
+    @Operation(summary = "Authentication and obtaining JWT",
+            description = "Submit your login and password to receive a JWT token for accessing secure endpoints.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Токен успешно сгенерирован",
+            @ApiResponse(responseCode = "201", description = "The token was successfully generated.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = AuthResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Неверные учётные данные"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Incorrect credentials"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<AuthResponseDTO> generateJWT(
-            @Parameter(description = "Учётные данные пользователя", required = true)
+            @Parameter(description = "User credentials", required = true)
             @Valid @RequestBody AuthRequestDTO authRequestDTO) {
         Optional<AuthResponseDTO> jwt = securityService.generateJWT(authRequestDTO);
         if (jwt.isEmpty()) {

@@ -8,8 +8,8 @@ import com.project.models.ParkingSpot;
 import com.project.models.Role;
 import com.project.models.Status;
 import com.project.models.User;
-import com.project.models.dto.Parking.ParkingRequestDTO;
-import com.project.models.dto.Parking.ParkingResponseDTO;
+import com.project.models.dto.parking.ParkingRequestDTO;
+import com.project.models.dto.parking.ParkingResponseDTO;
 import com.project.repositories.ParkingRepository;
 import com.project.repositories.UserRepository;
 import com.project.util.ParkingSpotMapper;
@@ -33,7 +33,6 @@ public class ParkingService {
     private final ParkingSpotMapper parkingSpotMapper;
     private final CurrentUserService currentUserService;
 
-
     public ParkingResponseDTO createSpot(ParkingRequestDTO req) {
         log.debug("IN ParkingService: createSpot");
         User owner = userRepository.findById(req.getOwnerId())
@@ -56,7 +55,6 @@ public class ParkingService {
                 .map(parkingSpotMapper::mapFromParkingSpotToParkingResponseDTO)
                 .collect(Collectors.toList());
     }
-
 
     public ParkingResponseDTO getSpotById(Integer id) {
         log.debug("IN ParkingService: getSpotById");
@@ -103,7 +101,9 @@ public class ParkingService {
     }
 
     private void verifyOwnerOrAdmin(ParkingSpot spot) {
+        log.debug("IN ParkingService: verifyOwnerOrAdmin");
         if (currentUserService.hasRole(Role.ADMIN)) {
+            log.debug("OUT ParkingService: verifyOwnerOrAdmin");
             return;
         }
         User currentUser = currentUserService.getCurrentUser();

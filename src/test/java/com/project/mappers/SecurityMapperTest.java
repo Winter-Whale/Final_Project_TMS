@@ -3,7 +3,7 @@ package com.project.mappers;
 import com.project.models.Role;
 import com.project.models.Security;
 import com.project.models.User;
-import com.project.models.dto.User.RegistrationDTO;
+import com.project.models.dto.user.RegistrationDTO;
 import com.project.util.SecurityMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

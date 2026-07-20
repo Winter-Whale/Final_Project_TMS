@@ -1,9 +1,9 @@
 package com.project.mappers;
 
 import com.project.models.User;
-import com.project.models.dto.User.RegistrationDTO;
-import com.project.models.dto.User.UserCreateDTO;
-import com.project.models.dto.User.UserUpdateDTO;
+import com.project.models.dto.user.RegistrationDTO;
+import com.project.models.dto.user.UserCreateDTO;
+import com.project.models.dto.user.UserUpdateDTO;
 import com.project.util.UserMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -7,8 +7,8 @@ import com.project.models.Booking;
 import com.project.models.ParkingSpot;
 import com.project.models.Status;
 import com.project.models.User;
-import com.project.models.dto.Booking.BookingRequestDTO;
-import com.project.models.dto.Booking.BookingResponseDTO;
+import com.project.models.dto.booking.BookingRequestDTO;
+import com.project.models.dto.booking.BookingResponseDTO;
 import com.project.repositories.BookingRepository;
 import com.project.repositories.ParkingRepository;
 import jakarta.transaction.Transactional;
@@ -69,8 +69,8 @@ public class BookingService {
         return mapToResponse(saved);
     }
 
-
     private BookingResponseDTO mapToResponse(Booking booking) {
+        log.debug("IN BookingService: mapToResponse");
         BookingResponseDTO dto = new BookingResponseDTO();
         dto.setBookingId(booking.getId());
         dto.setSpotId(booking.getSpot().getId());
@@ -79,6 +79,7 @@ public class BookingService {
         dto.setEndTime(booking.getEndTime());
         dto.setTotalPrice(booking.getTotalPrice());
         dto.setSpotStatus(booking.getSpot().getStatus());
+        log.debug("OUT BookingService: mapToResponse");
         return dto;
     }
 }

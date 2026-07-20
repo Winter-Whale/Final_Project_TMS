@@ -15,9 +15,9 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("Parking API")
                         .version("1.0.0")
-                        .description("Сервис для бронирования парковочных мест.\n" +
-                                "Возможные роли: **ADMIN**, **OWNER** (владелец места), **RENTER** (арендатор).\n" +
-                                "Для доступа к защищённым эндпоинтам используйте JWT-токен, полученный при аутентификации.")
+                        .description("Parking spot booking service.\n" +
+                                "Possible roles: **ADMIN**, **OWNER** (space owner), **RENTER** (renter).\n" +
+                                "To access protected endpoints, use the JWT token obtained during authentication.")
                 )
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"))
                 .schemaRequirement("BearerAuth", new SecurityScheme()

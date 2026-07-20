@@ -1,7 +1,7 @@
 package com.project.controllers;
 
-import com.project.models.dto.Parking.ParkingRequestDTO;
-import com.project.models.dto.Parking.ParkingResponseDTO;
+import com.project.models.dto.parking.ParkingRequestDTO;
+import com.project.models.dto.parking.ParkingResponseDTO;
 import com.project.services.ParkingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,16 +28,16 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/parking")
-@Tag(name = "Парковочные места", description = "Управление парковочными местами")
+@Tag(name = "Parking spots", description = "Parking spots management")
 public class ParkingController {
 
     private final ParkingService parkingService;
 
     @GetMapping
-    @Operation(summary = "Получить все парковочные места",
-            description = "Возвращает список всех мест с их статусами (доступно/занято).")
+    @Operation(summary = "Get all parking spots",
+            description = "Returns a list of all spots with their status (Free/Busy).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список получен",
+            @ApiResponse(responseCode = "200", description = "The list has been received.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ParkingResponseDTO.class)))
     })
@@ -46,84 +46,84 @@ public class ParkingController {
     }
 
     @GetMapping("/spot/{id}")
-    @Operation(summary = "Получить место по ID",
-            description = "Возвращает информацию о конкретном парковочном месте.")
+    @Operation(summary = "Get a spot by ID",
+            description = "Returns information about a specific parking spot.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Место найдено",
+            @ApiResponse(responseCode = "200", description = "The spot has been found.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ParkingResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Место не найдено",
+            @ApiResponse(responseCode = "404", description = "Spot not found",
                     content = @Content)
     })
     public ResponseEntity<ParkingResponseDTO> getSpotById(
-            @Parameter(description = "ID парковочного места", required = true, example = "1")
+            @Parameter(description = "ID parking spot", required = true, example = "1")
             @PathVariable Integer id) {
         ParkingResponseDTO responseDTO = parkingService.getSpotById(id);
         return ResponseEntity.ok(responseDTO);
     }
 
     @GetMapping("/user/{id}")
-    @Operation(summary = "Получить все места пользователя",
-            description = "Возвращает список мест, принадлежащих пользователю с указанным ID.")
+    @Operation(summary = "Get all user spots",
+            description = "Returns a list of spots owned by the user with the specified ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список получен",
+            @ApiResponse(responseCode = "200", description = "The list has been received.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ParkingResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
+            @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content)
     })
     public ResponseEntity<List<ParkingResponseDTO>> getSpotByUser(
-            @Parameter(description = "ID пользователя", required = true, example = "2")
+            @Parameter(description = "User ID", required = true, example = "2")
             @PathVariable Integer id) {
         return ResponseEntity.ok(parkingService.getSpotByUser(id));
     }
 
     @PostMapping
-    @Operation(summary = "Создать парковочное место",
-            description = "Владелец или администратор создаёт новое место. Доступно только для ролей OWNER и ADMIN.")
+    @Operation(summary = "Create a parking spot",
+            description = "The owner or administrator creates a new spot. This feature is only available to the OWNER and ADMIN roles.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Место создано",
+            @ApiResponse(responseCode = "201", description = "The spot has been created",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ParkingResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные"),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён (не OWNER/ADMIN)")
+            @ApiResponse(responseCode = "400", description = "Incorrect data"),
+            @ApiResponse(responseCode = "403", description = "Access denied (not OWNER/ADMIN)")
     })
     public ResponseEntity<ParkingResponseDTO> createSpot(
-            @Parameter(description = "Данные для создания места", required = true)
+            @Parameter(description = "Data for creating a spot", required = true)
             @RequestBody @Valid ParkingRequestDTO requestDTO) {
         ParkingResponseDTO createSpot = parkingService.createSpot(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createSpot);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Обновить парковочное место",
-            description = "Обновляет информацию о месте. Доступно владельцу места или администратору.")
+    @Operation(summary = "Update a parking spot",
+            description = "Updates information about a spot. Available to the spot owner or administrator.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Место обновлено",
+            @ApiResponse(responseCode = "200", description = "The spot has been updated.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ParkingResponseDTO.class))),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
-            @ApiResponse(responseCode = "404", description = "Место не найдено")
+            @ApiResponse(responseCode = "403", description = "Insufficient rights"),
+            @ApiResponse(responseCode = "404", description = "Spot not found")
     })
     public ResponseEntity<ParkingResponseDTO> updateSpot(
-            @Parameter(description = "ID места", required = true, example = "1")
+            @Parameter(description = "Spot ID", required = true, example = "1")
             @PathVariable Integer id,
-            @Parameter(description = "Новые данные места", required = true)
+            @Parameter(description = "New spot data", required = true)
             @RequestBody @Valid ParkingRequestDTO requestDTO) {
         ParkingResponseDTO update = parkingService.updateSpot(id, requestDTO);
         return ResponseEntity.ok(update);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Удалить парковочное место",
-            description = "Удаляет место по ID. Доступно владельцу или администратору.")
+    @Operation(summary = "Delete parking spot",
+            description = "Deletes a spot by ID. Available to owner or administrator.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Место удалено"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
-            @ApiResponse(responseCode = "404", description = "Место не найдено")
+            @ApiResponse(responseCode = "204", description = "The spot has been removed."),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights"),
+            @ApiResponse(responseCode = "404", description = "Spot not found")
     })
     public ResponseEntity<Void> deleteSpot(
-            @Parameter(description = "ID места", required = true, example = "1")
+            @Parameter(description = "Spot ID", required = true, example = "1")
             @PathVariable Integer id) {
         parkingService.deleteSpot(id);
         return ResponseEntity.noContent().build();

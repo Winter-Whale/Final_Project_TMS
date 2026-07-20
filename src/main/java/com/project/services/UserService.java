@@ -2,10 +2,10 @@ package com.project.services;
 
 import com.project.exceptions.UserNotFoundException;
 import com.project.exceptions.UserUpdateException;
-import com.project.models.dto.User.UserUpdateDTO;
+import com.project.models.dto.user.UserUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import com.project.models.User;
-import com.project.models.dto.User.UserCreateDTO;
+import com.project.models.dto.user.UserCreateDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import java.util.Optional;
 public class UserService {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
-
 
     public List<User> getAllUsers() {
         return userRepository.findAll();

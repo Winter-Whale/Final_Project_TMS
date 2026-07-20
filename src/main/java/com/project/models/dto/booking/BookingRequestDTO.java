@@ -1,4 +1,4 @@
-package com.project.models.dto.Booking;
+package com.project.models.dto.booking;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Future;
